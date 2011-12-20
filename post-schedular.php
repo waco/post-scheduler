@@ -44,18 +44,12 @@ function scheduledate_publish_scheduled_posts() {
 	global $wpdb;
 	postSchedulerTimezoneSetup();
 	$query = "select ID from $wpdb->posts " .
-          " where post_status = 'future' AND post_date >= '" . date('Y-m-d') ."';";
+          " where post_status = 'future' AND post_date <= '" . date('Y-m-d H:i:s') ."';";
 	$results = $wpdb->get_results($query);
 
-	$fp = fopen("wp-post-scheduler.log", "a");
-	fwrite( $fp, "" . count($results) . "\n" );
-	fwrite( $fp, "" . $query . "\n" );
   	if (!empty($results)) foreach ($results as $a) {
-	  fwrite( $fp, "1  " . $a->post_id . "\n" );
-	  wp_update_post(array('ID' => $a->ID, 'post_status' => 'publish'));
+      wp_update_post(array('ID' => $a->ID, 'post_status' => 'publish'));
 	}
-	fwrite( $fp, "" . time() . "\n" );
-	fclose( $fp );
 }
 
 if (postScheduler_is_wpmu())
